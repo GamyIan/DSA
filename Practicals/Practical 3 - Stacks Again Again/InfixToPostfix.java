@@ -1,63 +1,57 @@
 import java.util.Stack;
-import java.util.HashMap;
-import java.util.Map;
 
 class InfixToPostfix {
-    static HashMap<Character, Integer> precedenceMap = new HashMap<>();
-    static {
-        precedenceMap.put('+',1);
-        precedenceMap.put('-',1);
-        precedenceMap.put('*',2);
-        precedenceMap.put('/',2);
-        precedenceMap.put('^',3);
-    }
 
     static Stack<Character> stack = new Stack<>();
 
-
-    static boolean isPreceding(char ch) {
-        if (precedenceMap.containsKey(ch)){
-            if (precedenceMap.get(ch) >= precedenceMap.get(stack.peek())){
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else{
-            return false;
+    static int precedence(char ch) {
+        switch (ch){
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            case '^':
+                return 3;
+            default:
+                return -1;
         }
         
     }
 
     public static String convert(String inExp){
         StringBuilder postExp = new StringBuilder();
-        for (char ch : inExp.toCharArray()){
+        for (char ch : inExp.toCharArray()) {
             if (Character.isLetterOrDigit(ch)){
+                // Straight to output you go
                 postExp.append(ch);
             } 
             else if (ch == '('){
+                // push straight onto stakc no thinking
                 stack.push(ch);
             }
             else if(ch==')'){
-                while (!stack.isEmpty()){
-                    char top = stack.pop();
-                    if (top == '('){
-                        break;
-                    }
-                    postExp.append(top);
-                }
-            }
-            else { // If it is an operator I think idk what I'm doing
-                while (!stack.isEmpty() && stack.peek()!='(' && !isPreceding(ch)){
+                // if closing bracket then keep popping till u get opening bracket
+                while (!stack.isEmpty() && stack.peek()!='('){
                     postExp.append(stack.pop());
                 }
-                stack.push(ch);
+                stack.pop(); // to pop out the '(' itself
+                
+            }
+            // If it is an operator I think (idk what I'm doing)
+            else { 
+                // keep popping if the top of stack has more precedence than the current operator
+                while (!stack.isEmpty() && stack.peek()!='(' && (precedence(stack.peek())>=precedence(ch))) { 
+                    postExp.append(stack.pop());
+                }
+                stack.push(ch); // put the operator in the stack
             }
             
         }
 
-        while (!stack.isEmpty()){
+        // Pop out remaining shit in stack
+        while (!stack.isEmpty()) {  
             postExp.append(stack.pop());
         }
 
@@ -67,8 +61,8 @@ class InfixToPostfix {
     public static void main(String[] args){
         String exp1 = "A+(B*C+D)/E";   // 	ABC*D+E/+
         String exp2 = "A+(BC+D)/E+FG";   // ABCD+E/+FG+
-        System.out.println(exp1+": "+convert(exp1));
-        System.out.println(exp2+": "+convert(exp2));
+        System.out.println(exp1+" --> "+convert(exp1));
+        System.out.println(exp2+" --> "+convert(exp2));
 
     }
 }

@@ -1,28 +1,16 @@
 import java.util.Stack;
 
-public class PushBottomRecursion{
-
-    Stack<Integer> stack = new Stack<Integer>();
-
-    void push(int value){
-        stack.push(value);
-    }
+public class PushBottomRecursion extends Stack<Integer>{
 
     public void pushBottom(int value){
-        if(stack.isEmpty()){
-            stack.push(value);
+        if(this.isEmpty()){
+            this.push(value);
             return;
         }
 
-        int temp=stack.pop();
+        int temp=this.pop();
         pushBottom(value);
         push(temp);
-
-
-    }
-
-    public Stack<Integer> get(){
-        return stack;
     }
 
 
@@ -34,6 +22,6 @@ public class PushBottomRecursion{
 
         stack.pushBottom(40);
 
-        System.out.println("Stack: "+stack.get());
+        System.out.println("Stack: "+stack);
     }
 }
